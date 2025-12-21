@@ -6,6 +6,10 @@ authors = ["Audio Transcription CLI Team"]
 description = "High-performance audio transcription CLI with speaker diarization"
 license = "MIT"
 
+[lib]
+name = "audio_transcription_cli"
+path = "src/lib.rs"
+
 [[bin]]
 name = "audio-transcribe"
 path = "src/main.rs"
@@ -32,6 +36,7 @@ tokio = { version = "1.35", features = ["full"] }
 
 # HTTP client for model downloads
 reqwest = { version = "0.11", features = ["stream"] }
+futures-util = "0.3"
 
 # File system and path handling
 dirs = "5.0"
@@ -58,3 +63,4 @@ num_cpus = "1.16"
 # Property-based testing
 proptest = "1.4"
 tempfile = "3.8"
+tokio-test = "0.4"

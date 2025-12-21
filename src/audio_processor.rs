@@ -1,7 +1,7 @@
 use std::path::Path;
 use std::time::{Duration, Instant};
 use crate::error::{Result, AudioTranscriptionError};
-use crate::model_manager::ModelManager;
+// use crate::model_manager::ModelManager;
 use crate::{ModelSize};
 
 #[derive(Debug, Clone)]
@@ -74,14 +74,14 @@ pub struct TranscriptResult {
 }
 
 pub struct AudioProcessor {
-    model_manager: ModelManager,
+    // model_manager: ModelManager,
     config: ProcessingConfig,
 }
 
 impl AudioProcessor {
-    pub fn new(model_manager: ModelManager, config: ProcessingConfig) -> Self {
+    pub fn new(config: ProcessingConfig) -> Self {
         Self {
-            model_manager,
+            // model_manager,
             config,
         }
     }

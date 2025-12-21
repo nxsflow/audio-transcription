@@ -401,10 +401,22 @@ The testing strategy employs a dual approach combining unit tests for specific e
 - Error handling scenarios
 - Integration points between components
 
-**Test Organization**:
-- Co-locate tests with source files using `.rs` files in `tests/` modules
-- Separate integration tests in `tests/` directory
-- Mock external dependencies (file system, network) for isolated testing
+### Test Organization
+
+**Unit Tests**:
+- Co-locate tests with source files using `#[cfg(test)]` modules within each source file
+- This follows standard Rust conventions where unit tests live alongside the code they test
+- Each module (e.g., `model_manager.rs`, `audio_processor.rs`) contains its own test module
+
+**Integration Tests**:
+- Place integration tests in `tests/` directory at project root for end-to-end testing
+- These tests the public API and interactions between components
+- Use separate files for different integration test suites
+
+**Property-Based Tests**:
+- Include property tests within the `#[cfg(test)]` modules of the components they test
+- This keeps property tests close to the implementation for better maintainability
+- Use `proptest!` macro within the test modules
 
 ### Testing Coverage
 
