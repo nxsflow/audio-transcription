@@ -6,13 +6,13 @@ This implementation plan breaks down the audio transcription CLI into discrete, 
 
 ## Tasks
 
-- [ ] 1. Set up project structure and dependencies
+- [x] 1. Set up project structure and dependencies
   - Create Rust project with Cargo.toml including all required dependencies
   - Set up basic CLI argument parsing with clap
   - Create module structure for core components
   - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6_
 
-- [ ]* 1.1 Write unit tests for CLI argument parsing
+- [x] 1.1 Write unit tests for CLI argument parsing
   - Test all command-line flags and their validation
   - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6_
 
