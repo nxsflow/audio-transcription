@@ -1,7 +1,7 @@
 use std::path::Path;
 use std::time::{Duration, Instant};
 use crate::error::{Result, AudioTranscriptionError};
-// use crate::model_manager::ModelManager;
+// use crate::core::ModelManager;
 use crate::{ModelSize};
 
 #[derive(Debug, Clone)]

@@ -1,8 +1,6 @@
-pub mod audio_processor;
-pub mod file_browser;
-pub mod model_manager;
-pub mod progress_display;
-pub mod transcript_generator;
+pub mod cli;
+pub mod core;
+pub mod ui;
 pub mod error;
 
 pub use crate::error::Result;

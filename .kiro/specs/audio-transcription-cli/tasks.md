@@ -35,8 +35,8 @@ This implementation plan breaks down the audio transcription CLI into discrete, 
     - Test download failures and recovery scenarios
     - _Requirements: 10.1_
 
-- [ ] 3. Implement File Browser component
-  - [ ] 3.1 Create FileBrowser struct with directory navigation
+- [x] 3. Implement File Browser component
+  - [x] 3.1 Create FileBrowser struct with directory navigation
     - Implement directory listing with file type detection
     - Add support for parent directory navigation
     - _Requirements: 1.1, 1.4, 1.5_
@@ -45,7 +45,7 @@ This implementation plan breaks down the audio transcription CLI into discrete, 
     - **Property 1: Directory Display Formatting**
     - **Validates: Requirements 1.2**
 
-  - [ ] 3.3 Implement audio format filtering
+  - [x] 3.3 Implement audio format filtering
     - Filter directory contents to show only supported audio formats
     - _Requirements: 1.6_
 
@@ -53,7 +53,7 @@ This implementation plan breaks down the audio transcription CLI into discrete, 
     - **Property 3: Audio Format Filtering**
     - **Validates: Requirements 1.6**
 
-  - [ ] 3.5 Add interactive terminal UI with crossterm
+  - [x] 3.5 Add interactive terminal UI with crossterm
     - Implement arrow key navigation and selection highlighting
     - Add Enter key handling for directory navigation and file selection
     - _Requirements: 1.3_

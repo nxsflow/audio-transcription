@@ -1,14 +1,14 @@
 use clap::{Parser, ValueEnum};
 use std::path::PathBuf;
+use std::io::{self, Write};
 
-mod audio_processor;
-mod file_browser;
-mod model_manager;
-mod progress_display;
-mod transcript_generator;
+mod cli;
+mod core;
+mod ui;
 mod error;
 
 use crate::error::Result;
+use crate::cli::FileBrowser;
 
 #[derive(Parser)]
 #[command(name = "audio-transcribe")]
@@ -83,25 +83,98 @@ async fn main() -> Result<()> {
     log::info!("Audio Transcription CLI v{}", env!("CARGO_PKG_VERSION"));
     log::debug!("CLI arguments: {:?}", cli);
 
-    // TODO: Implement main application logic
-    // This will be implemented in subsequent tasks
-    println!("Audio Transcription CLI initialized successfully!");
-    println!("Model: {}", cli.model);
-    if let Some(input) = &cli.input {
-        println!("Input file: {}", input.display());
+    // Determine input file path
+    let input_file = if let Some(input) = cli.input {
+        // Direct file input provided
+        log::info!("Processing file: {}", input.display());
+        input
     } else {
-        println!("File browser mode (interactive selection)");
+        // No input file provided, launch file browser
+        log::info!("No input file provided, launching interactive file browser...");
+        
+        // Wait a moment for any pending output to finish, then clear screen completely
+        std::thread::sleep(std::time::Duration::from_millis(100));
+        print!("\x1b[2J\x1b[H\x1b[0m"); // Clear screen, home cursor, reset attributes
+        io::stdout().flush().unwrap();
+        
+        println!("Audio Transcription CLI - File Browser");
+        println!("Navigate to select an audio file for transcription");
+        println!("Press 'q' to quit, 'f' to toggle filter, up/down to navigate, Enter to select");
+        println!(); // Add blank line
+        
+        let current_dir = std::env::current_dir()
+            .map_err(|e| crate::error::AudioTranscriptionError::FileBrowser(
+                format!("Failed to get current directory: {}", e)
+            ))?;
+        
+        let mut browser = FileBrowser::new(current_dir)?;
+        
+        match browser.run_interactive()? {
+            Some(selected_file) => {
+                // Clear screen after selection
+                print!("\x1b[2J\x1b[H");
+                io::stdout().flush().unwrap();
+                log::info!("Selected file: {}", selected_file.display());
+                selected_file
+            }
+            None => {
+                // Clear screen on exit
+                print!("\x1b[2J\x1b[H");
+                io::stdout().flush().unwrap();
+                println!("No file selected. Exiting...");
+                return Ok(());
+            }
+        }
+    };
+
+    // Validate that the selected file exists and is supported
+    if !input_file.exists() {
+        return Err(crate::error::AudioTranscriptionError::FileBrowser(
+            format!("File does not exist: {}", input_file.display())
+        ));
     }
+
+    if !input_file.is_file() {
+        return Err(crate::error::AudioTranscriptionError::FileBrowser(
+            format!("Path is not a file: {}", input_file.display())
+        ));
+    }
+
+    // Check if it's a supported audio format
+    if let Some(extension) = input_file.extension().and_then(|ext| ext.to_str()) {
+        let supported_formats = ["wav", "mp3", "m4a", "flac", "ogg", "webm"];
+        if !supported_formats.contains(&extension.to_lowercase().as_str()) {
+            return Err(crate::error::AudioTranscriptionError::UnsupportedFormat(
+                format!("Unsupported audio format: .{}", extension)
+            ));
+        }
+    } else {
+        return Err(crate::error::AudioTranscriptionError::UnsupportedFormat(
+            "File has no extension or unsupported format".to_string()
+        ));
+    }
+
+    println!("\n✅ Selected audio file: {}", input_file.display());
+    println!("📊 Configuration:");
+    println!("   Model: {}", cli.model);
     if let Some(output) = &cli.output {
-        println!("Output directory: {}", output.display());
-    }
-    println!("Chunk size: {} seconds", cli.chunk_size);
-    if let Some(jobs) = cli.jobs {
-        println!("Parallel jobs: {}", jobs);
+        println!("   Output directory: {}", output.display());
     } else {
-        println!("Parallel jobs: auto-detect");
+        println!("   Output directory: Same as input file");
     }
-    println!("GPU acceleration: {}", !cli.no_gpu);
+    println!("   Chunk size: {} seconds", cli.chunk_size);
+    if let Some(jobs) = cli.jobs {
+        println!("   Parallel jobs: {}", jobs);
+    } else {
+        println!("   Parallel jobs: auto-detect ({})", num_cpus::get());
+    }
+    println!("   GPU acceleration: {}", !cli.no_gpu);
+
+    // TODO: Implement actual audio processing
+    // This will be implemented in subsequent tasks
+    println!("\n🚧 Audio processing pipeline not yet implemented.");
+    println!("This will be added in upcoming tasks (Task 5-15).");
+    println!("For now, the file browser integration is complete!");
 
     Ok(())
 }

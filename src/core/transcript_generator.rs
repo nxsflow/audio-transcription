@@ -1,5 +1,5 @@
 use std::path::{Path, PathBuf};
-use crate::audio_processor::{SpeechSegment, TranscriptResult};
+use crate::core::audio_processor::{SpeechSegment, TranscriptResult};
 use crate::error::{Result, AudioTranscriptionError};
 
 pub struct TranscriptGenerator {

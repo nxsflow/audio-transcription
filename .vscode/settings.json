@@ -1,13 +1,15 @@
 {
     "kiroAgent.configureMCP": "Disabled",
     "kiroAgent.trustedCommands": [
-        "cargo build",
+        "cargo build *",
         "cargo check",
+        "cargo run -- --help",
         "cargo test *",
         "gh --version",
         "git add *",
         "git diff *",
         "git status",
+        "mkdir *",
         "source \"$HOME/.cargo/env\" && cargo check",
         "source \"$HOME/.cargo/env\" && cargo run *",
         "source \"$HOME/.cargo/env\" && cargo --version",
