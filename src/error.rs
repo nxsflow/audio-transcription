@@ -16,6 +16,9 @@ pub enum AudioTranscriptionError {
     #[error("Network error: {0}")]
     Network(#[from] reqwest::Error),
 
+    #[error("Hugging Face Hub error: {0}")]
+    HuggingFaceHub(#[from] hf_hub::api::tokio::ApiError),
+
     #[error("Serialization error: {0}")]
     Serialization(#[from] serde_json::Error),
 

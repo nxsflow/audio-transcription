@@ -19,45 +19,53 @@ path = "src/main.rs"
 clap = { version = "4.4", features = ["derive"] }
 
 # Terminal UI and interaction
-crossterm = "0.27"
+crossterm = "0.29"
 
 # Audio processing
 symphonia = { version = "0.5", features = ["all"] }
 hound = "3.5"
 
 # Machine learning models
-# whisper-rs = "0.10"  # Temporarily disabled - requires cmake
-# Note: pyannote-rs is not available yet, will use placeholder for now
-# pyannote-rs = "0.1"
+whisper-rs = "0.15"
+pyannote-rs = "0.3"  
 
 # Parallel processing
 rayon = "1.8"
 tokio = { version = "1.35", features = ["full"] }
 
 # HTTP client for model downloads
-reqwest = { version = "0.11", features = ["stream"] }
+reqwest = { version = "0.12", features = ["stream"] }
 futures-util = "0.3"
 
+# Hugging Face Hub API for model downloads
+hf-hub = { version = "0.4", features = ["tokio"] }
+
 # File system and path handling
-dirs = "5.0"
+dirs = "6.0"
 
 # Error handling
 anyhow = "1.0"
-thiserror = "1.0"
+thiserror = "2.0"
 
 # Serialization for configuration
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 
 # Progress indicators
-indicatif = "0.17"
+indicatif = "0.18"
 
 # Logging
 log = "0.4"
-env_logger = "0.10"
+env_logger = "0.11"
 
 # System information
 num_cpus = "1.16"
+
+# Environment variables
+dotenv = "0.15"
+
+# Date and time handling
+chrono = { version = "0.4", features = ["serde"] }
 
 [dev-dependencies]
 # Property-based testing

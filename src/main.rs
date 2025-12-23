@@ -1,4 +1,4 @@
-use clap::{Parser, ValueEnum};
+use clap::Parser;
 use std::path::PathBuf;
 use std::io::{self, Write};
 
@@ -9,6 +9,7 @@ mod error;
 
 use crate::error::Result;
 use crate::cli::FileBrowser;
+use crate::core::{ModelManager, ModelSize};
 
 #[derive(Parser)]
 #[command(name = "audio-transcribe")]
@@ -44,27 +45,6 @@ pub struct Cli {
     pub verbose: bool,
 }
 
-#[derive(Clone, ValueEnum, Debug)]
-pub enum ModelSize {
-    Tiny,
-    Base,
-    Small,
-    Medium,
-    Large,
-}
-
-impl std::fmt::Display for ModelSize {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            ModelSize::Tiny => write!(f, "tiny"),
-            ModelSize::Base => write!(f, "base"),
-            ModelSize::Small => write!(f, "small"),
-            ModelSize::Medium => write!(f, "medium"),
-            ModelSize::Large => write!(f, "large"),
-        }
-    }
-}
-
 #[tokio::main]
 async fn main() -> Result<()> {
     let cli = Cli::parse();
@@ -82,6 +62,24 @@ async fn main() -> Result<()> {
 
     log::info!("Audio Transcription CLI v{}", env!("CARGO_PKG_VERSION"));
     log::debug!("CLI arguments: {:?}", cli);
+
+    // Check and ensure models are available before proceeding
+    log::info!("Checking required models...");
+    let model_manager = ModelManager::new()?;
+    match model_manager.ensure_models_available(&cli.model).await {
+        Ok(true) => {
+            log::info!("All required models are available");
+        }
+        Ok(false) => {
+            println!("Model download cancelled. Cannot proceed without required models.");
+            return Ok(());
+        }
+        Err(e) => {
+            println!("Error with model setup: {}", e);
+            println!("Cannot proceed without required models.");
+            return Err(e);
+        }
+    }
 
     // Determine input file path
     let input_file = if let Some(input) = cli.input {
@@ -108,7 +106,7 @@ async fn main() -> Result<()> {
             ))?;
         
         let mut browser = FileBrowser::new(current_dir)?;
-        
+
         match browser.run_interactive()? {
             Some(selected_file) => {
                 // Clear screen after selection

@@ -1,10 +1,16 @@
 {
     "kiroAgent.configureMCP": "Disabled",
+    "kiroAgent.trustedTools": [
+        "remote_web_search",
+        "webFetch"
+    ],
     "kiroAgent.trustedCommands": [
         "cargo build *",
-        "cargo check",
+        "cargo check *",
+        "cargo doc *",
         "cargo run -- --help",
         "cargo test *",
+        "cargo tree *",
         "gh --version",
         "git add *",
         "git diff *",
