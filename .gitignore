@@ -1,3 +1,6 @@
 audio
 .env
 .DS_Store
+**/*/node_modules
+apps/desktop/node_modules
+node_modules/

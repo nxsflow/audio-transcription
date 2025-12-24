@@ -2,33 +2,71 @@
 
 ## Overview
 
-The Audio Level Monitor is a Tauri-based desktop application that provides real-time visual feedback of audio levels from both microphone input and system audio output. The system uses a hybrid architecture combining Rust backend for audio processing with a React frontend for user interface, ensuring cross-platform compatibility and optimal performance.
+The Audio Level Monitor is a Tauri-based desktop application organized within a monorepo workspace that provides real-time visual feedback of audio levels from both microphone input and system audio output. The system uses a hybrid architecture combining Rust backend for audio processing with a React frontend for user interface, ensuring cross-platform compatibility and optimal performance.
 
-The application follows a non-recording approach, processing audio streams only for level calculation and immediate display, with no persistent storage of audio data at this stage.
+The monorepo structure enables shared type definitions between frontend and backend, unified tooling, and future scalability for additional applications and packages. The application follows a non-recording approach, processing audio streams only for level calculation and immediate display, with no persistent storage of audio data at this stage.
 
 ## Architecture
+
+### Monorepo Workspace Structure
+
+```
+├── package.json              # Root package.json with workspace scripts
+├── pnpm-workspace.yaml       # Workspace configuration
+├── apps/
+│   ├── desktop/              # Tauri desktop application (Rust)
+│   │   ├── package.json      # Desktop app dependencies
+│   │   └── tauri.conf.json   # Tauri configuration
+│   ├── tauri-react/          # Web app for Tauri desktop
+│   │   ├── src/              # Routes, components, utilities
+│   │   ├── package.json      # Web app dependencies
+│   │   └── vite.config.ts    # Vite configuration
+│   └── backend/              # AWS CDK backend (future)
+├── packages/
+│   ├── shared-types/         # Shared TypeScript/Rust type definitions
+│   │   ├── src/
+│   │   │   ├── audio.ts      # Audio-related types
+│   │   │   └── index.ts      # Type exports
+│   │   └── package.json
+│   └── ui/                   # Shared UI components (future)
+└── .kiro/specs/              # Feature specifications
+```
 
 ### High-Level Architecture
 
 ```mermaid
 graph TB
-    subgraph "Frontend (React + TypeScript)"
-        UI[User Interface]
-        LM1[Microphone Level Meter]
-        LM2[System Audio Level Meter]
-        Controls[Start/Stop Controls]
-    end
-    
-    subgraph "Tauri Bridge"
-        Commands[Tauri Commands]
-        Events[Tauri Events]
-    end
-    
-    subgraph "Rust Backend"
-        AM[Audio Manager]
-        MIC[Microphone Processor]
-        SYS[System Audio Processor]
-        LMB[Level Meter Backend]
+    subgraph "Monorepo Workspace"
+        subgraph "apps/desktop (Tauri App)"
+            subgraph "Frontend (React + TypeScript)"
+                UI[User Interface]
+                LM1[Microphone Level Meter]
+                LM2[System Audio Level Meter]
+                Controls[Start/Stop Controls]
+            end
+            
+            subgraph "Tauri Bridge"
+                Commands[Tauri Commands]
+                Events[Tauri Events]
+            end
+            
+            subgraph "Rust Backend"
+                AM[Audio Manager]
+                MIC[Microphone Processor]
+                SYS[System Audio Processor]
+                LMB[Level Meter Backend]
+            end
+        end
+        
+        subgraph "packages/shared-types"
+            ST[Shared Types]
+            AT[Audio Types]
+        end
+        
+        subgraph "apps/backend (Future)"
+            CDK[AWS CDK]
+            Lambda[Lambda Functions]
+        end
     end
     
     subgraph "System Audio APIs"
@@ -55,15 +93,21 @@ graph TB
     SYS --> WASAPI
     SYS --> CoreAudio
     SYS --> ALSA
+    
+    UI -.->|imports| ST
+    AM -.->|uses| AT
+    Commands -.->|uses| ST
+    Events -.->|uses| ST
 ```
 
 ### Component Architecture
 
-The system is organized into three main layers:
+The system is organized into four main layers within the monorepo workspace:
 
-1. **Presentation Layer (React)**: Handles user interface, level meter visualization, and user controls
-2. **Application Layer (Tauri Commands/Events)**: Manages communication between frontend and backend
-3. **Audio Processing Layer (Rust)**: Handles low-level audio capture, processing, and level calculation
+1. **Presentation Layer (React)**: Located in `apps/desktop/src/`, handles user interface, level meter visualization, and user controls
+2. **Application Layer (Tauri Commands/Events)**: Manages communication between frontend and backend using shared types
+3. **Audio Processing Layer (Rust)**: Located in `apps/desktop/`, handles low-level audio capture, processing, and level calculation
+4. **Shared Types Layer**: Located in `packages/shared-types/`, provides type definitions used across frontend and backend
 
 ## Components and Interfaces
 
@@ -160,14 +204,74 @@ enum AudioSource {
 }
 ```
 
+### Shared Types Package
+
+The `packages/shared-types` package provides type definitions that are used across both the Rust backend and TypeScript frontend, ensuring type safety and consistency.
+
+#### Package Structure
+```
+packages/shared-types/
+├── src/
+│   ├── audio.ts              # Audio-related type definitions
+│   ├── events.ts             # Event type definitions
+│   └── index.ts              # Main exports
+├── package.json              # Package configuration
+└── tsconfig.json             # TypeScript configuration
+```
+
+#### Type Definitions
+```typescript
+// packages/shared-types/src/audio.ts
+export interface AudioLevelUpdate {
+  source: 'mic' | 'system_audio';
+  level: number;                   // 0-100 range
+  timestamp: number;               // Unix timestamp
+}
+
+export type AudioSource = 'mic' | 'system_audio';
+
+export interface AudioLevels {
+  microphone: number;
+  systemAudio: number;
+}
+```
+
+#### Rust Type Generation
+The shared types are also generated for Rust using `ts-rs` or similar tools to ensure consistency:
+
+```rust
+// Generated Rust types from TypeScript definitions
+#[derive(Debug, Clone, Serialize, Deserialize, TS)]
+#[ts(export)]
+pub struct AudioLevelUpdate {
+    pub source: AudioSource,
+    pub level: f32,
+    pub timestamp: u64,
+}
+```
+
 ## Data Models
+
+### Shared Type Definitions
+
+All data models are defined in the `packages/shared-types` package to ensure consistency between frontend and backend.
 
 ### AudioLevelUpdate
 ```typescript
+// packages/shared-types/src/audio.ts
 interface AudioLevelUpdate {
   source: 'mic' | 'system_audio';  // Audio source identifier
   level: number;                   // 0-100 range
   timestamp: number;               // Unix timestamp
+}
+```
+
+### AudioLevels
+```typescript
+// packages/shared-types/src/audio.ts
+interface AudioLevels {
+  microphone: number;              // Current microphone level (0-100)
+  systemAudio: number;             // Current system audio level (0-100)
 }
 ```
 
@@ -263,6 +367,10 @@ pub struct MonitoringState {
 ### Property 12: Non-blocking audio processing
 *For any* audio buffer processing operation, the user interface should remain responsive and not be blocked
 **Validates: Requirements 6.4**
+
+### Property 13: Workspace type consistency
+*For any* type definition used across frontend and backend, the shared types package should ensure consistent type definitions between TypeScript and Rust
+**Validates: Requirements 7.3**
 
 ## Error Handling
 

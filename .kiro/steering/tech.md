@@ -1,13 +1,22 @@
 # Technology Stack
 
-## Frontend
-- **Framework**: Tauri (Rust + Web technologies)
+## Applications
+
+### Desktop App (Tauri)
+- **Framework**: Tauri (Rust)
+- **Purpose**: Native desktop application with Python sidecars
+
+### Tauri Web App (TanStack Start)
+- **Framework**: TanStack Start (meta-framework)
 - **UI Library**: React with TypeScript
+- **Component Library**: shadcn/ui (centralized in packages/ui)
+- **Styling**: Tailwind CSS
 - **State Management & Routing**: TanStack ecosystem
   - TanStack Start (meta-framework)
   - TanStack Router (type-safe routing)
   - TanStack Query (data fetching & caching)
 - **Build System**: Vite (via TanStack Start)
+- **Purpose**: Web application which is used in the Tauri desktop app
 
 ## Sidecars
 - **Language**: Python
@@ -27,11 +36,15 @@
 
 ### Development
 ```bash
-# Start Tauri development server
-npm run tauri dev
+# Start desktop Tauri development server (start web app as well)
+pnpm run dev
+
+# Start web development server
+pnpm run dev:tauri-react
 
 # Build for production
-npm run tauri build
+pnpm run build  # Desktop
+pnpm run build:tauri-react    # Web
 
 # Install dependencies
 pnpm install
@@ -53,5 +66,27 @@ cd backend && cdk bootstrap
 ### Python Sidecars
 ```bash
 # Run Python sidecar
-python src-tauri/sidecars/sidecar.py
+python apps/desktop/sidecars/sidecar.py
 ```
+
+### UI Components (shadcn/ui)
+```bash
+# Add shadcn/ui components (run from project root)
+pnpm shadcn:add button input card alert accordion
+
+# Add individual components
+pnpm shadcn:add button
+pnpm shadcn:add input
+pnpm shadcn:add card
+
+# Components are installed to: packages/ui/src/components/ui/
+# Import in apps: 
+#   import { Button, Input } from '@workspace/ui'
+#   import { cn } from '@workspace/ui/lib/utils'
+#   import type { AudioLevel } from '@workspace/shared-types'
+```
+
+### Workspace Aliases
+- `@/` - Local app files (e.g., `@/components`, `@/lib`)
+- `@workspace/ui` - Shared UI components and utilities
+- `@workspace/shared-types` - Shared TypeScript types

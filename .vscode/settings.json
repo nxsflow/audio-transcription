@@ -16,9 +16,13 @@
         "git diff *",
         "git status",
         "mkdir *",
+        "pnpm run build",
+        "pnpm install",
+        "pnpm run test",
         "source \"$HOME/.cargo/env\" && cargo check",
         "source \"$HOME/.cargo/env\" && cargo run *",
         "source \"$HOME/.cargo/env\" && cargo --version",
+        "tauri build *",
         "which *",
     ]
 }

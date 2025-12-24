@@ -2,27 +2,33 @@
 
 ## Root Directory Layout
 ```
-├── src/                    # Tauri application source
-│   ├── components/         # React components
-│   ├── pages/             # Application pages/routes
-│   ├── hooks/             # Custom React hooks
-│   ├── utils/             # Utility functions
-│   ├── types/             # TypeScript type definitions
-│   ├── assets/            # Static assets (images, icons)
-│   └── main.tsx           # Application entry point
-├── backend/               # Python sidecars & AWS CDK
-│   ├── cdk/              # AWS CDK infrastructure code
-│   ├── lambda/           # AWS Lambda functions
-│   └── cdk.json          # CDK configuration
-├── .github/              # GitHub Actions workflows
-│   └── workflows/        # CI/CD pipeline definitions
-├── audio/                # Audio assets (gitignored)
-├── .kiro/                # Kiro configuration & steering
-└── src-tauri/            # Tauri configuration & Rust code
-    ├── src/              # Rust backend code
-│   ├── sidecars/         # Python sidecar applications
-    ├── Cargo.toml        # Rust dependencies
-    └── tauri.conf.json   # Tauri configuration
+├── apps/                       # Applications
+│   ├── desktop/                # Tauri desktop application
+│   │   ├── src/                # Rust backend code
+│   │   ├── sidecars/           # Python sidecar applications
+│   │   ├── Cargo.toml          # Rust dependencies
+│   │   └── tauri.conf.json     # Tauri configuration
+│   └── tauri-react/            # TanStack based web app for Tauri
+│       ├── src/                # React frontend code with TanStack
+│       │   ├── components/     # React components
+│       │   ├── data/           # Data fetching and presentation
+│       │   ├── db-collections/ # Local databases
+│       │   ├── hooks/          # Custom React hooks
+│       │   ├── integrations/   # Integrations of libraries
+│       │   ├── lib/            # Utility functions
+│       │   ├── routes/         # Application pages/routes
+│       │   └── router.tsx      # Application entry point
+│       └── vite.config.ts      # TanStack Start configuration
+├── packages/                   # Shared packages
+│   └── shared-types/           # Shared TypeScript types
+├── backend/                    # Python sidecars & AWS CDK
+│   ├── cdk/                    # AWS CDK infrastructure code
+│   ├── lambda/                 # AWS Lambda functions
+│   └── cdk.json                # CDK configuration
+├── .github/                    # GitHub Actions workflows
+│   └── workflows/              # CI/CD pipeline definitions
+├── audio/                      # Audio assets (gitignored)
+└── .kiro/                      # Kiro configuration & steering
 ```
 
 ## Conventions

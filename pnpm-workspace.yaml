@@ -1,0 +1,11 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+onlyBuiltDependencies:
+  - esbuild
+
+# Shared configuration for all packages
+shared-workspace-lockfile: true
+save-workspace-protocol: true
+link-workspace-packages: true

@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@workspace/ui/components/ui/*": ["./src/components/ui/*"],
+      "@workspace/ui/components/*": ["./src/components/*"],
+      "@workspace/ui/lib/utils": ["./src/lib/utils"],
+      "@workspace/ui/lib/*": ["./src/lib/*"],
+      "@workspace/ui/hooks/*": ["./src/hooks/*"],
+      "@workspace/ui": ["./src/index"],
+    }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}

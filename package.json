@@ -1,0 +1,35 @@
+{
+  "name": "audio-level-monitor-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Audio Level Monitor - Monorepo workspace with Tauri desktop app and shared types",
+  "scripts": {
+    "dev": "pnpm --filter desktop dev",
+    "dev:tauri-react": "pnpm --filter tauri-react dev",
+    "dev:desktop": "pnpm --filter desktop dev",
+    "build:shared": "pnpm --filter shared-types build",
+    "build:ui": "pnpm --filter ui build",
+    "build:tauri-react": "pnpm run build:shared && pnpm run build:ui && pnpm --filter tauri-react build",
+    "build:desktop": "pnpm run build:tauri-react && pnpm --filter desktop build",
+    "build": "pnpm run build:desktop",
+    "test": "pnpm --recursive test",
+    "test:watch": "pnpm --recursive test:watch",
+    "lint": "pnpm --recursive lint",
+    "format": "pnpm --recursive format",
+    "check": "pnpm --recursive check",
+    "clean": "pnpm --recursive clean",
+    "type-check": "pnpm --recursive type-check",
+    "dev:types": "pnpm --filter shared-types dev",
+    "shadcn:add": "pnpm dlx shadcn@latest add"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "packageManager": "pnpm@10.26.1"
+}
